@@ -2,7 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 
 
-token = fs.readFileSync("./.token");
+token = fs.readFileSync(".token");
 const config = {
     headers: {'Authorization': 'Bearer ' + token }
   };
@@ -10,11 +10,21 @@ const config = {
     axios.get("https://tetr.io/api/users/me", config)
     .then(response => {
        console.log(response.data)
-       let rating ="Rating: "+ response.data.user.league.rating.toFixed(2);
-       let rank ="Tetra League rank: "+ response.data.user.league.rank.toUpperCase();
-        let gp = "Games played:" + response.data.user.league.gamesplayed;
-        let gw = "Games won:" + response.data.user.league.gameswon;
-        
+       let user = response.data.user;
+       
+       function XPtoLevel(xp) {
+        return Math.pow(xp / 500, 0.6) + ((1 / 5000) * xp) + 1;
+    }
+
+
+
+       let rating ="Rating: "+ user.league.rating.toFixed(2);
+       let rank ="Tetra League rank: "+ user.league.rank.toUpperCase();
+        let gp = "Games played: " + user.league.gamesplayed;
+        let gw = "Games won: " + user.league.gameswon;
+        let level = "Level: " + XPtoLevel(user.xp).toFixed(0);
+        let wlpercentage = "(" + Math.floor(user.league.gameswon/user.league.gamesplayed*100) + ")";
+       
        fs.writeFile('rating.txt', rating, (err) => { 
      
            // In case of a error throw err. 
@@ -25,12 +35,24 @@ const config = {
         // In case of a error throw err. 
         if (err) throw err; 
         }); 
-        fs.writeFile('gamesplayed.txt', rating, (err) => { 
+        fs.writeFile('gamesplayed.txt', gp, (err) => { 
      
             // In case of a error throw err. 
             if (err) throw err; 
         });
-        fs.writeFile('gameswon.txt', rating, (err) => { 
+        fs.writeFile('gameswon.txt', gw, (err) => { 
+     
+            // In case of a error throw err. 
+            if (err) throw err; 
+        });
+
+        fs.writeFile('percentage.txt', wlpercentage, (err) => { 
+     
+            // In case of a error throw err. 
+            if (err) throw err; 
+        });
+        
+        fs.writeFile('level.txt', level, (err) => { 
      
             // In case of a error throw err. 
             if (err) throw err; 
