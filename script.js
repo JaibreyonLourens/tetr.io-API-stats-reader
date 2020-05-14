@@ -7,11 +7,33 @@ const config = {
     headers: {'Authorization': 'Bearer ' + token }
   };
   function GetData(callback){
-    axios.get("https://tetr.io/api/users/me", config)
+    axios.get("https://tetr.io/api/users/5e77979d1c08bb29066f7b93", config)
     .then(response => {
-       console.log(response.data)
-       let user = response.data.user;
-       
+        console.log("succes");
+        let user = response.data.user;
+        let l = '40l'
+        let records = response.data.user.records
+       Object.keys(records).forEach(function(key) {
+           var value = records[key];
+           if(value.record.endcontext.seed == "256698819.9376227"){
+            //console.log(value.record.endcontext.finalTime);
+            function millisToMinutesAndSeconds(millis) {
+                var minutes = Math.floor(millis / 60000);
+                var seconds = ((millis % 60000) / 1000).toFixed(3);
+                return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+              }
+
+            let finalTime = "40L best time: " + millisToMinutesAndSeconds(value.record.endcontext.finalTime);
+           
+            fs.writeFile('sprint.txt', finalTime, (err) => { 
+     
+                // In case of a error throw err. 
+                if (err) throw err; 
+            });
+           }
+           
+       })
+
        function XPtoLevel(xp) {
         return Math.pow(xp / 500, 0.6) + ((1 / 5000) * xp) + 1;
     }
@@ -23,7 +45,7 @@ const config = {
         let gp = "Games played: " + user.league.gamesplayed;
         let gw = "Games won: " + user.league.gameswon;
         let level = "Level: " + XPtoLevel(user.xp).toFixed(0);
-        let wlpercentage = "(" + Math.floor(user.league.gameswon/user.league.gamesplayed*100) + ")";
+        let wlpercentage = "W/L precentage: " + Math.floor(user.league.gameswon/user.league.gamesplayed*100) + "%";
        
        fs.writeFile('rating.txt', rating, (err) => { 
      
@@ -57,14 +79,22 @@ const config = {
             // In case of a error throw err. 
             if (err) throw err; 
         });
-   });
+        
+    });
+    /*axios.get("https://tetr.io/api/users/me", config)
+    .then(response => {
+       console.log("succes");
+       let user = response.data.user;
+       
+     
+   });*/
 
    callback();
   }
 function waitMinute(){
     setTimeout(function(){
         GetData(waitMinute);
-    }, 60000)
+    }, 180000 )
 }
 
 GetData(waitMinute);
