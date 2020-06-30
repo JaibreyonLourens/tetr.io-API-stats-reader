@@ -9,13 +9,14 @@ const config = {
   function GetData(callback){
     axios.get("https://tetr.io/api/users/5e77979d1c08bb29066f7b93", config)
     .then(response => {
-        console.log("succes");
+        console.log("succes",);
         let user = response.data.user;
         let l = '40l'
         let records = response.data.user.records
        Object.keys(records).forEach(function(key) {
            var value = records[key];
-           if(value.record.endcontext.seed == "256698819.9376227"){
+           
+           if(value.record.endcontext.gametype == "40l"){
             //console.log(value.record.endcontext.finalTime);
             function millisToMinutesAndSeconds(millis) {
                 var minutes = Math.floor(millis / 60000);
@@ -24,7 +25,7 @@ const config = {
               }
 
             let finalTime = "40L best time: " + millisToMinutesAndSeconds(value.record.endcontext.finalTime);
-           
+                console.log(finalTime);
             fs.writeFile('sprint.txt', finalTime, (err) => { 
      
                 // In case of a error throw err. 
